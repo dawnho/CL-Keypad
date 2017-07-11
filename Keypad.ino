@@ -23,12 +23,9 @@ char keymap[Rows][Cols]=
 };
 
 //keypad connections to the arduino terminals is given as:
-
 byte rPins[Rows]= {8,7,6,5}; //Rows 0 to 3
 byte cPins[Cols]= {4,3,2}; //Columns 0 to 2
 
-// command for library forkeypad
-//initializes an instance of the Keypad class
 Keypad kpd= Keypad(makeKeymap(keymap), rPins, cPins, Rows, Cols);
 
 #define ledPin 9
@@ -121,7 +118,7 @@ void timerReset()
 
 void setup()
 {
-     Serial.begin(9600);  // initializing serail monitor
+     Serial.begin(9600);
      kpd.addEventListener(keyPressed);
      t.every(1000, keepCount);
      strip.begin();
