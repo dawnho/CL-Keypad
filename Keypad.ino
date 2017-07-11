@@ -1,12 +1,9 @@
-/* the tutorial code for 3x4 Matrix Keypad with Arduino is as
-This code prints the key pressed on the keypad to the serial port*/
-
 #include "Keypad.h"
 #include "Timer.h"
 #include <Adafruit_NeoPixel.h>
 
-const byte Rows= 4; //number of rows on the keypad i.e. 4
-const byte Cols= 3; //number of columns on the keypad i,e, 3
+const byte Rows= 4;
+const byte Cols= 3;
 
 Timer t;
 bool timerOn = false;
@@ -16,8 +13,6 @@ int duration = 0;
 const int maxLength = 12;
 char keyPhrase[maxLength+1];
 int idx = 0;
-
-//we will definne the key map as on the key pad:
 
 char keymap[Rows][Cols]=
 {
@@ -133,8 +128,6 @@ void setup()
      strip.show();
 }
 
-//If key is pressed, this key is stored in 'keypressed' variable
-//If key is not equal to 'NO_KEY', then this key is printed out
 void loop()
 {
      if (duration > resetDuration)
@@ -146,4 +139,3 @@ void loop()
 
      t.update();
 }
-
