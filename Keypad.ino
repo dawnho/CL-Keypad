@@ -31,6 +31,7 @@ Keypad kpd= Keypad(makeKeymap(keymap), rPins, cPins, Rows, Cols);
 #define ledPin 9
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, ledPin, NEO_GRB + NEO_KHZ800);
 
+// Flash red three times
 void blipFlash()
 {
     strip.setPixelColor(0, 0, 255, 0);
@@ -52,6 +53,7 @@ void blipFlash()
     strip.show(); 
 }
 
+// Keeps track of current key pressed duration
 void keepCount()
 {
     if (timerOn)
@@ -64,6 +66,7 @@ void keepCount()
     }
 }
 
+// Save key pressed to array
 void logKey(KeypadEvent keyChar)
 {
     timerOn = true;
@@ -71,6 +74,7 @@ void logKey(KeypadEvent keyChar)
     idx = (idx + 1) % maxLength;
 }
 
+// Flash long green once
 void longFlash()
 {
     strip.setPixelColor(0, 255, 0, 0);
@@ -80,6 +84,7 @@ void longFlash()
     strip.show();
 }
 
+// Event callback for key pressed
 void keyPressed( KeypadEvent key )
 {
     if (kpd.getState() == PRESSED)
@@ -93,6 +98,7 @@ void keyPressed( KeypadEvent key )
     }
 }
 
+// Reset all to base state
 void resetKeyphraseAndTimer()
 {
     duration = 0;
@@ -101,6 +107,7 @@ void resetKeyphraseAndTimer()
     idx = 0;
 }
 
+// Send keyphrase and reset
 void sendKeyphrase()
 {
     Serial.println("send");
@@ -110,6 +117,7 @@ void sendKeyphrase()
     
 }
 
+// Reset state when timer duration has run out
 void timerReset()
 {
     blipFlash();
