@@ -1,6 +1,20 @@
 #include "Keypad.h"
 #include "Timer.h"
-#include <Adafruit_NeoPixel.h>
+#include "Adafruit_NeoPixel.h"
+#include "SPI.h"
+#include "Ethernet2.h"
+#include "EthernetUdp2.h"
+
+byte mac[] = {
+  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
+};
+IPAddress ip(192, 168, 1, 100);
+IPAddress remoteIp(192, 168, 1, 1);
+
+unsigned int localPort = 8888;
+unsigned int rmtPort = 8000;
+
+EthernetUDP Udp;
 
 const byte Rows= 4;
 const byte Cols= 3;
@@ -11,7 +25,7 @@ const int resetDuration = 8;
 int duration = 0;
 
 const int maxLength = 12;
-char keyPhrase[maxLength+1];
+char keyPhrase[maxLength+2];
 int idx = 0;
 
 char keymap[Rows][Cols]=
@@ -70,6 +84,7 @@ void keepCount()
 void logKey(KeypadEvent keyChar)
 {
     timerOn = true;
+    duration = 0;
     keyPhrase[idx] = keyChar;
     idx = (idx + 1) % maxLength;
 }
@@ -77,9 +92,7 @@ void logKey(KeypadEvent keyChar)
 // Flash long green once
 void longFlash()
 {
-    strip.setPixelColor(0, 255, 0, 0);
-    strip.show();
-    delay(750);
+    delay(450);
     strip.setPixelColor(0, 0, 0, 0);
     strip.show();
 }
@@ -110,8 +123,12 @@ void resetKeyphraseAndTimer()
 // Send keyphrase and reset
 void sendKeyphrase()
 {
-    Serial.println("send");
-    Serial.println(keyPhrase);
+    strip.setPixelColor(0, 255, 0, 0);
+    strip.show();
+    Udp.beginPacket(remoteIp, rmtPort);
+    Udp.write(keyPhrase, strlen(keyPhrase));
+    Udp.write("\n");
+    Udp.endPacket();
     longFlash();
     resetKeyphraseAndTimer();
     
@@ -126,7 +143,8 @@ void timerReset()
 
 void setup()
 {
-     Serial.begin(9600);
+     Ethernet.begin(mac, ip);
+     Udp.begin(localPort);
      kpd.addEventListener(keyPressed);
      t.every(1000, keepCount);
      strip.begin();
